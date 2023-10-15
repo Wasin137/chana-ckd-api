@@ -9,10 +9,16 @@ export async function POST(request) {
     return NextResponse.json({message: "Comment created"}, {status: 201})
 }
 
-export async function GET() {
-    await connectMongoDB()
-    const comments = await Comment.find().sort({ createdAt: -1})
-    return NextResponse.json({comments})
+export async function GET(request) {
+    await connectMongoDB();
+
+    if (request.nextUrl.searchParams.has('firstpage')) {
+        const comments = await Comment.find().sort({ createdAt: -1 }).limit(4);
+        return NextResponse.json({comments});
+    }
+
+    const comments = await Comment.find().sort({ createdAt: -1 });
+    return NextResponse.json({comments});
 }
 
 export async function DELETE(request) {
